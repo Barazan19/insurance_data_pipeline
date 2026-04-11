@@ -1,0 +1,5 @@
+claim_id,policy_id,claim_date,claim_amount,claim_status,diagnosis_code
+CL001,P001,2024-05-10,1200000,Approved,D001
+CL002,P003,2024-06-12,800000,Rejected,D002
+CL003,P001,2024-07-01,450000,Approved,D003
+CL004,P004,2024-07-15,2000000,Pending,D004

@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual Environment
+venv/
+.venv/
+env/
+.env
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker volumes (local data, not needed in repo)
+postgres_data/
+airflow_data/
+
+# Old/duplicate files
+docker-compose-old.yml
+scripts/insurance_pipeline_dag.py
+
+# Logs
+*.log
+logs/
+
+# Jupyter
+.ipynb_checkpoints/
