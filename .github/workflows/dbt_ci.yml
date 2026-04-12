@@ -1,0 +1,83 @@
+name: dbt CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  dbt-test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: insurance_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install dbt-postgres pandas sqlalchemy psycopg2-binary
+
+      - name: Create schemas
+        env:
+          DATABASE_URL: postgresql+psycopg2://postgres:postgres@localhost:5432/insurance_db
+        run: |
+          python -c "
+          from sqlalchemy import create_engine, text
+          import os
+          engine = create_engine(os.environ['DATABASE_URL'])
+          with engine.begin() as conn:
+              conn.execute(text('CREATE SCHEMA IF NOT EXISTS raw'))
+              conn.execute(text('CREATE SCHEMA IF NOT EXISTS clean'))
+              conn.execute(text('CREATE SCHEMA IF NOT EXISTS mart'))
+          print('[OK] Schemas created')
+          "
+
+      - name: Ingest raw data
+        env:
+          DATABASE_URL: postgresql+psycopg2://postgres:postgres@localhost:5432/insurance_db
+        run: |
+          cd scripts
+          python -c "
+          import sys
+          sys.path.insert(0, '.')
+          from ingest_customers import run as ingest_customers
+          from ingest_policies import run as ingest_policies
+          from ingest_claims import run as ingest_claims
+          ingest_customers()
+          ingest_policies()
+          ingest_claims()
+          "
+
+      - name: dbt run
+        env:
+          DBT_HOST: localhost
+        run: |
+          cd insurance_dbt
+          dbt run --profiles-dir .
+
+      - name: dbt test
+        env:
+          DBT_HOST: localhost
+        run: |
+          cd insurance_dbt
+          dbt test --profiles-dir .
