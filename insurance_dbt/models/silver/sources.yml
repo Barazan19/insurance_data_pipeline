@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: raw
+    tables:
+      - name: customers_raw
+      - name: policies_raw
+      - name: claims_raw

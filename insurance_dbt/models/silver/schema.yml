@@ -1,0 +1,47 @@
+version: 2
+
+models:
+  - name: clean_customers
+    description: "Standardized customer data from raw layer"
+    columns:
+      - name: customer_id
+        tests:
+          - unique
+          - not_null
+      - name: gender
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['Male', 'Female', 'Unknown']
+
+  - name: clean_policies
+    description: "Standardized policy data from raw layer"
+    columns:
+      - name: policy_id
+        tests:
+          - unique
+          - not_null
+      - name: customer_id
+        tests:
+          - not_null
+      - name: policy_status
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['Active', 'Lapsed', 'Expired', 'Unknown']
+
+  - name: clean_claims
+    description: "Standardized claims data from raw layer"
+    columns:
+      - name: claim_id
+        tests:
+          - unique
+          - not_null
+      - name: policy_id
+        tests:
+          - not_null
+      - name: claim_status
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['Approved', 'Rejected', 'Pending', 'Unknown']
