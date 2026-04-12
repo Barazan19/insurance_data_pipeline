@@ -16,8 +16,8 @@ clean-targets:
 models:
   insurance_dbt:
     silver:
-      +schema: clean
+      +dataset: clean
       +materialized: table
     gold:
-      +schema: mart
+      +dataset: mart
       +materialized: table

@@ -2,6 +2,7 @@ version: 2
 
 sources:
   - name: raw
+    database: insurance-data-platform-493115
     schema: raw
     tables:
       - name: customers_raw

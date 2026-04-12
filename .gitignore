@@ -28,6 +28,9 @@ Thumbs.db
 postgres_data/
 airflow_data/
 
+# GCP credentials (NEVER commit this)
+*.json
+
 # Old/duplicate files
 docker-compose-old.yml
 scripts/insurance_pipeline_dag.py

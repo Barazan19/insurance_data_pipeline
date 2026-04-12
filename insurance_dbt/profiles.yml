@@ -2,11 +2,10 @@ insurance_dbt:
   target: dev
   outputs:
     dev:
-      type: postgres
-      host: "{{ env_var('DBT_HOST', 'insurance_postgres') }}"
-      port: 5432
-      user: postgres
-      password: postgres
-      dbname: insurance_db
-      schema: public
+      type: bigquery
+      method: service-account
+      project: "{{ env_var('GCP_PROJECT', 'insurance-data-platform-493115') }}"
+      dataset: raw
+      keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS', '') }}"
+      location: asia-southeast1
       threads: 4
