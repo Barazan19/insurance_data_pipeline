@@ -4,6 +4,7 @@ sys.path.insert(0, "/opt/airflow/scripts")
 from datetime import datetime
 from airflow import DAG
 from airflow.operators.python import PythonOperator
+from airflow.operators.bash import BashOperator
 
 from ingest_customers import run as ingest_customers
 from ingest_policies import run as ingest_policies
@@ -14,18 +15,6 @@ from quality_checks import run as run_quality_checks
 
 def init_schema():
     execute_sql_file("/opt/airflow/sql/01_create_schema.sql")
-
-
-def build_clean_layer():
-    execute_sql_file("/opt/airflow/sql/03_create_clean_tables.sql")
-
-
-def build_mart_layer():
-    execute_sql_file("/opt/airflow/sql/04_create_mart_tables.sql")
-
-
-def build_business_marts():
-    execute_sql_file("/opt/airflow/sql/06_create_business_marts.sql")
 
 
 default_args = {
@@ -62,19 +51,14 @@ with DAG(
         python_callable=ingest_claims,
     )
 
-    task_build_clean_layer = PythonOperator(
-        task_id="build_clean_layer",
-        python_callable=build_clean_layer,
+    task_dbt_run = BashOperator(
+        task_id="dbt_run",
+        bash_command="cd /opt/airflow/insurance_dbt && dbt run --profiles-dir /opt/airflow/insurance_dbt",
     )
 
-    task_build_mart_layer = PythonOperator(
-        task_id="build_mart_layer",
-        python_callable=build_mart_layer,
-    )
-
-    task_build_business_marts = PythonOperator(
-        task_id="build_business_marts",
-        python_callable=build_business_marts,
+    task_dbt_test = BashOperator(
+        task_id="dbt_test",
+        bash_command="cd /opt/airflow/insurance_dbt && dbt test --profiles-dir /opt/airflow/insurance_dbt",
     )
 
     task_run_quality_checks = PythonOperator(
@@ -87,8 +71,7 @@ with DAG(
         >> task_ingest_customers
         >> task_ingest_policies
         >> task_ingest_claims
-        >> task_build_clean_layer
-        >> task_build_mart_layer
-        >> task_build_business_marts
+        >> task_dbt_run
+        >> task_dbt_test
         >> task_run_quality_checks
     )

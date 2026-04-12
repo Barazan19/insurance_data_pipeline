@@ -29,12 +29,13 @@ services:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__CORE__LOAD_EXAMPLES: "False"
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://postgres:postgres@insurance_postgres:5432/insurance_db
-      _PIP_ADDITIONAL_REQUIREMENTS: pandas sqlalchemy psycopg2-binary
+      _PIP_ADDITIONAL_REQUIREMENTS: pandas sqlalchemy psycopg2-binary dbt-postgres
     volumes:
       - ./dags:/opt/airflow/dags
       - ./scripts:/opt/airflow/scripts
       - ./sql:/opt/airflow/sql
       - ./data:/opt/airflow/data
+      - ./insurance_dbt:/opt/airflow/insurance_dbt
       - airflow_data:/opt/airflow
     command: >
       bash -c "
@@ -64,7 +65,7 @@ services:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__CORE__LOAD_EXAMPLES: "False"
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://postgres:postgres@insurance_postgres:5432/insurance_db
-      _PIP_ADDITIONAL_REQUIREMENTS: pandas sqlalchemy psycopg2-binary
+      _PIP_ADDITIONAL_REQUIREMENTS: pandas sqlalchemy psycopg2-binary dbt-postgres
     ports:
       - "8080:8080"
     volumes:
@@ -72,6 +73,7 @@ services:
       - ./scripts:/opt/airflow/scripts
       - ./sql:/opt/airflow/sql
       - ./data:/opt/airflow/data
+      - ./insurance_dbt:/opt/airflow/insurance_dbt
       - airflow_data:/opt/airflow
     command: airflow webserver
 
@@ -90,12 +92,13 @@ services:
       AIRFLOW__CORE__EXECUTOR: LocalExecutor
       AIRFLOW__CORE__LOAD_EXAMPLES: "False"
       AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://postgres:postgres@insurance_postgres:5432/insurance_db
-      _PIP_ADDITIONAL_REQUIREMENTS: pandas sqlalchemy psycopg2-binary
+      _PIP_ADDITIONAL_REQUIREMENTS: pandas sqlalchemy psycopg2-binary dbt-postgres
     volumes:
       - ./dags:/opt/airflow/dags
       - ./scripts:/opt/airflow/scripts
       - ./sql:/opt/airflow/sql
       - ./data:/opt/airflow/data
+      - ./insurance_dbt:/opt/airflow/insurance_dbt
       - airflow_data:/opt/airflow
     command: airflow scheduler
 

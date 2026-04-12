@@ -1,0 +1,12 @@
+insurance_dbt:
+  target: dev
+  outputs:
+    dev:
+      type: postgres
+      host: insurance_postgres
+      port: 5432
+      user: postgres
+      password: postgres
+      dbname: insurance_db
+      schema: public
+      threads: 4
