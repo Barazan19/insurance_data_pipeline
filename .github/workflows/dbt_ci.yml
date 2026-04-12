@@ -56,16 +56,22 @@ jobs:
         env:
           DATABASE_URL: postgresql+psycopg2://postgres:postgres@localhost:5432/insurance_db
         run: |
-          cd scripts
           python -c "
-          import sys
-          sys.path.insert(0, '.')
-          from ingest_customers import run as ingest_customers
-          from ingest_policies import run as ingest_policies
-          from ingest_claims import run as ingest_claims
-          ingest_customers()
-          ingest_policies()
-          ingest_claims()
+          import os, sys
+          import pandas as pd
+          from sqlalchemy import create_engine
+
+          engine = create_engine(os.environ['DATABASE_URL'])
+          base = 'data/raw'
+
+          for csv, table in [
+              (f'{base}/customers.csv', 'customers_raw'),
+              (f'{base}/policies.csv',  'policies_raw'),
+              (f'{base}/claims.csv',    'claims_raw'),
+          ]:
+              df = pd.read_csv(csv)
+              df.to_sql(table, engine, schema='raw', if_exists='replace', index=False)
+              print(f'[OK] Loaded {len(df)} rows into raw.{table}')
           "
 
       - name: dbt run
