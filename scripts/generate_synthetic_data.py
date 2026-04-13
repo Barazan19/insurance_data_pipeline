@@ -5,8 +5,8 @@ from datetime import date, timedelta
 # ── Config ──────────────────────────────────────────────────────────────
 random.seed(42)
 
-NUM_CUSTOMERS = 1000
-NUM_POLICIES  = 3000
+NUM_CUSTOMERS = 100_000
+NUM_POLICIES  = 500_000
 CLAIM_RATE    = 0.60   # 60% of policies will have at least one claim
 
 # ── Reference data ──────────────────────────────────────────────────────
